@@ -18,7 +18,6 @@ export class Main extends Component {
                 <View></View>
             )
         }
-        // console.log(API_KEY);
         return (
             <View style={{ flex: 1, justifyContent: 'center' }}>
                 <Text>{currentUser.name} is logged in</Text>
