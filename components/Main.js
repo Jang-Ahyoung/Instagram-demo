@@ -28,6 +28,7 @@ export class Main extends Component {
                     }} />
 
                 <Tab.Screen name="AddContainer" component={EmptyScreen}
+
                     listeners={({ navigation }) => ({
                         tabPress: event => {
                             event.preventDefault();
