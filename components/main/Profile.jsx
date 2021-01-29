@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Image, FlatList } from 'react-native';
+import { StyleSheet, View, Text, Image, FlatList,Button } from 'react-native';
 import {connect} from 'react-redux';
 import firebase from 'firebase';
 require('firebase/firestore')
@@ -7,6 +7,7 @@ require('firebase/firestore')
 function Profile(props) {
     const [userPost, setUserPosts] = useState([]);
     const [user, setUser] = useState(null);
+    const [following, setFollowing] = useState(false);
     useEffect(()=>{
         const { currentUser, posts } = props;
         // fetch해온 것으로부터 가져왔어!
@@ -44,9 +45,30 @@ function Profile(props) {
                 })
                 setUserPosts(posts);
             })
-
         }
-    }, [props.route.params.uid])
+        if (props.following.indexOf(props.route.params.uid) > -1) {
+            setFollowing(true);
+        } else {
+            setFollowing(false);
+        }
+    }, [props.route.params.uid, props.following])
+
+    const onFollow = ()=>{
+        firebase.firestore()
+        .collection("following")
+        .doc(firebase.auth().currentUser.uid)
+        .collection("userFollowing")
+        .doc(props.route.params.uid)
+        .set({})
+    }
+    const onUnfollow = ()=>{
+        firebase.firestore()
+        .collection("following")
+        .doc(firebase.auth().currentUser.uid)
+        .collection("userFollowing")
+        .doc(props.route.params.uid)
+        .delete()
+    }
     if(user === null){
         return <View/>
     }
@@ -55,6 +77,22 @@ function Profile(props) {
             <View style={styles.InfoContainer}>
                 <Text>사용자 : {user.name}</Text>
                 <Text>{user.email}</Text>
+                {props.route.params.uid !== firebase.auth().currentUser.uid ? (
+                    <View>
+                        {following ? (
+                            <Button
+                                title="Following"
+                                onPress={()=>onUnfollow()}
+
+                            />
+                        ) : (
+                            <Button
+                                title="Follow"
+                                onPress={()=>onFollow()}
+                            />
+                        )}
+                    </View>
+                ):null}
             </View>
 
             <View style={styles.GalleryContainer}>
@@ -98,7 +136,8 @@ const styles = StyleSheet.create({
 })
 const mapStateToProps = (store) => ({
     currentUser : store.userState.currentUser,
-    posts : store.userState.posts
+    posts : store.userState.posts,
+    following : store.userState.following,
 })
 
 export default connect(mapStateToProps, null)(Profile);
