@@ -51,9 +51,7 @@ export function fetchUserFollowing() {
                     const id = doc.id;
                     return id;
                 })
-                dispatch({
-                    type: USER_FOLOWING_STATE_CHANGE, following
-                })
+                dispatch({ type: USER_FOLOWING_STATE_CHANGE, following });
                 for (let i = 0; i < following.length; i++) {
                     dispatch(fetchUsersData(following[i]));
                 }

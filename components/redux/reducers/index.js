@@ -3,7 +3,7 @@ import { user } from './user';
 import { users } from './users';
 const Reducers = combineReducers({
     userState: user,
-    usersState: users,
+    usersState: users
 
 })
 
